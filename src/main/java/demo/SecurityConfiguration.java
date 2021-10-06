@@ -1,12 +1,5 @@
 package demo;
 
-import java.io.IOException;
-import java.util.Collections;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -31,9 +23,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated())
             .oauth2Login()
-            	.defaultSuccessUrl("/", true)
-            	//.failureUrl("./xxxx.html")
-            //.failureHandler(new MyFailureHandler())
+            	//.defaultSuccessUrl("/", true)
             .and()
             .logout()
             .logoutSuccessUrl("/");
@@ -43,10 +33,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     
     @Bean 
     AuthenticationEventPublisher eventPublisher(ApplicationEventPublisher application) {
-        AuthenticationEventPublisher authentication = 
-            new MyAuthenticationEventPublisher(application);
-//        authentication.setAdditionalExceptionMappings(
-//            Collections.singletonMap(OAuth2AuthenticationException.class, FooEvent.class));
+        AuthenticationEventPublisher authentication = new MyAuthenticationEventPublisher(application);
         return authentication;
     }
     
@@ -65,31 +52,5 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     		super.publishAuthenticationFailure(exception, authentication);
     	}
     }
-    
-//    private ProviderManager providerManager() {
-//        JwtDecoder jwtDecoder = JwtDecoders.fromIssuerLocation(...);
-//        JwtAuthenticationProvider authenticationProvider = 
-//            new JwtAuthenticationProvider(jwtDecoder);
-//        authenticationProvider.setJwtAuthenticationConverter(jwtAuthenticationConverter);
-//        ProviderManager providerManager = new ProviderManager
-//            (Arrays.asList(authenticationProvider));
-//        providerManager.setAuthenticationEventPublisher(fooPublisher);
-//        return providerManager;
-//    }
-    
-    private class MyFailureHandler extends SimpleUrlAuthenticationFailureHandler {
-    	
-    	@Override
-    	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-    			AuthenticationException exception) throws IOException, ServletException {
-    		super.onAuthenticationFailure(request, response, exception);
-    		System.out.println(exception);
-    	}
-    }
-
-//	public void configure(HttpSecurity http) throws Exception {
-//		http.oauth2Login().and().authorizeRequests().antMatchers("/**").authenticated().and().csrf()
-//				.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
-//	}
 
 }
