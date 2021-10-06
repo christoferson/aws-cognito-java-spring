@@ -19,6 +19,22 @@
 					<div class="box">
 						Hello, <strong th:text="${#authentication.name}"></strong>!
 					</div>
+					<div>
+					Authenticated username:
+			        <div sec:authentication="name"></div>
+			        Authenticated user roles:
+			        <div sec:authentication="principal.authorities"></div>
+					</div>
+					<div>
+						<a th:href="@{/logout}">Logout</a>
+					</div>
+					<div>
+						<a href="javascript: document.logoutForm.submit()" role="menuitem"> Logout2</a>
+	
+					   <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
+					      <input type="submit" value="Sign Out"/>
+					   </form> 
+					</div>
 				</div>
 
 				<div sec:authorize="isAnonymous()">
