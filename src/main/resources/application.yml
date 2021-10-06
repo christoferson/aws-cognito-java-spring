@@ -1,0 +1,24 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          cognito:
+            client-id: 2au68j6b4jr2nqrb4u0gelpk35
+            client-secret: lq8q8d6ifacbean1ff1ftblg7mm317i0llnj8a812ej0bghh1hc
+            scope: openid
+            redirect-uri: http://localhost:8080/login/oauth2/code/cognito
+            client-name: webapp
+            authorization-grant-type: authorization_code
+        provider:
+          cognito:
+            issuerUri: https://cognito-idp.eu-west-1.amazonaws.com/eu-west-1_LZRCKade4
+            authorizationUri: https://b2b-dev.auth.eu-west-1.amazoncognito.com/oauth2/authorize
+            tokenUri: https://b2b-dev.auth.eu-west-1.amazoncognito.com/oauth2/token
+            userInfoUri: https://b2b-dev.auth.eu-west-1.amazoncognito.com/oauth2/userInfo
+            user-name-attribute: cognito:username
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
