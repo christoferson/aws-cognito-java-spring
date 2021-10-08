@@ -24,6 +24,8 @@ public class CognitoOidcClientInitiatedLogoutSuccessHandler extends SimpleUrlLog
 	private final ClientRegistrationRepository clientRegistrationRepository;
 
 	private String postLogoutRedirectUri;
+	
+	private String logoutUri;
 
 	public CognitoOidcClientInitiatedLogoutSuccessHandler(ClientRegistrationRepository clientRegistrationRepository) {
 		Assert.notNull(clientRegistrationRepository, "clientRegistrationRepository cannot be null");
@@ -56,7 +58,9 @@ public class CognitoOidcClientInitiatedLogoutSuccessHandler extends SimpleUrlLog
 			if (endSessionEndpoint != null) {
 				return URI.create(endSessionEndpoint.toString());
 			}
-
+			if (this.logoutUri != null) {
+				return URI.create(this.logoutUri);
+			}
 			return URI.create("");
 		}
 		return null;
@@ -85,14 +89,17 @@ public class CognitoOidcClientInitiatedLogoutSuccessHandler extends SimpleUrlLog
 
 	private String endpointUri(URI endSessionEndpoint, String idToken, String postLogoutRedirectUri, String clientid) {
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUri(endSessionEndpoint);
-		//builder.queryParam("id_token_hint", idToken);
+
 		if (postLogoutRedirectUri != null) {
 			//builder.queryParam("post_logout_redirect_uri", postLogoutRedirectUri);
-			//builder.queryParam("redirect_uri", postLogoutRedirectUri);
+			// In Cognito redirect_uri is for when you want to logout+reauthenticate as another user. switch user functionality.
+			// It will require parameters for re-authentication
+			//builder.queryParam("redirect_uri", postLogoutRedirectUri); 
+			// Logout and redirect to logout complete page
 			builder.queryParam("logout_uri", postLogoutRedirectUri);
 		}
 		builder.queryParam("client_id", clientid);
-		//builder.queryParam("response_type", "code");
+
 		// @formatter:off
 		return builder.encode(StandardCharsets.UTF_8)
 				.build()
@@ -118,6 +125,17 @@ public class CognitoOidcClientInitiatedLogoutSuccessHandler extends SimpleUrlLog
 		Assert.notNull(postLogoutRedirectUri, "postLogoutRedirectUri cannot be null");
 		this.postLogoutRedirectUri = postLogoutRedirectUri;
 	}
+
+	public String getLogoutUri() {
+		return logoutUri;
+	}
+
+	public CognitoOidcClientInitiatedLogoutSuccessHandler withLogoutUri(String logoutUri) {
+		this.logoutUri = logoutUri;
+		return this;
+	}
+	
+	
 }
 
 
