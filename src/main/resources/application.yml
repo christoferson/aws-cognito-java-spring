@@ -4,16 +4,16 @@ spring:
       client:
         registration:
           cognito:
-            client-id: zzz
-            client-secret: zzz
+            client-id: {cognito.client_id}
+            client-secret: {cognito.client_secret}
             provider: cognito
             scope: openid
             redirect-uri: http://localhost:8080/login/oauth2/code/cognito
-            client-name: webapp
+            client-name: {cognito.client_name}
             authorization-grant-type: authorization_code
         provider:
           cognito:
-            issuerUri: https://cognito-idp.<region>.amazonaws.com/<user pool id>
+            issuerUri: https://cognito-idp.{aws.region}.amazonaws.com/{cognito.user_pool_id}
             user-name-attribute: cognito:username
   thymeleaf: # Thymeleaf
     cache: false
