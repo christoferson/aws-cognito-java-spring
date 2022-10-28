@@ -1,0 +1,32 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          cognito:
+            client-id: zzz
+            client-secret: zzz
+            provider: cognito
+            scope: openid
+            redirect-uri: http://localhost:8080/login/oauth2/code/cognito
+            client-name: webapp
+            authorization-grant-type: authorization_code
+        provider:
+          cognito:
+            issuerUri: https://cognito-idp.<region>.amazonaws.com/<user pool id>
+            user-name-attribute: cognito:username
+  thymeleaf: # Thymeleaf
+    cache: false
+    mode: HTML
+    encoding: UTF-8
+    prefix: file:src/main/resources/templates/
+  resources: # Static resources
+    static-locations: file:src/main/resources/static/
+    cache:
+      period: 0
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
