@@ -26,10 +26,10 @@
 			        <div sec:authentication="principal.authorities"></div>
 					</div>
 					<div>
-						<a th:href="@{/logout}">Logout</a>
+						<a th:href="@{/logout}">Logout (With Confirmation)</a>
 					</div>
 					<div>
-						<a href="javascript: document.logoutForm.submit()" role="menuitem"> Logout2</a>
+						<a href="javascript: document.logoutForm.submit()" role="menuitem">Logout</a>
 	
 					   <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
 					      <input type="submit" value="Sign Out"/>

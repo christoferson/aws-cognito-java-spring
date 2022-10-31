@@ -15,6 +15,11 @@ import org.springframework.security.web.util.UrlUtils;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+/**
+ * Custom Handler since Cognito does not return the LogoutUrl.
+ * Implementation based on OidcClientInitiatedLogoutSuccessHandler.
+ * Cognito LogoutUrl: https://<DOMAIN_PREFIX>.auth.<AWS_REGION>.amazoncognito.com/logout
+ */
 public class CognitoOidcLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
 
 	private final String clientId;

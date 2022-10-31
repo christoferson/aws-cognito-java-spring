@@ -10,37 +10,31 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationEventPublisher;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import demo.cognito.CognitoOidcLogoutSuccessHandler;
 import demo.cognito.CognitoOidcLogoutSuccessHandlerFactory;
 
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	private ClientRegistrationRepository clientRegistrationRepository;
-	
-	@Value("${spring.security.oauth2.client.registration.cognito.client-id}")
-	private String cognitoClientId;
-	
-	@Value("${aws.cognito.logout-url}")
-	private String cognitoLogoutUri;	
-	
-	@Autowired
 	private CognitoOidcLogoutSuccessHandlerFactory logoutSuccessHandlerFactory;
 	
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+    
+    	String postLogoutRedirectPath = "/bye";
     	
-    	LogoutSuccessHandler logoutHandler = new CognitoOidcClientInitiatedLogoutSuccessHandler(this.clientRegistrationRepository)
-    		.withPostLogoutRedirectUri("{baseUrl}/bye")
-    		.withLogoutUri(cognitoLogoutUri);
-    	
-        http.csrf()
+        LogoutSuccessHandler logoutSuccessHandler = logoutSuccessHandlerFactory.getInstance(new HashMap<String, String>() {{
+			this.put("post_logout_redirect_path", postLogoutRedirectPath);
+		}});
+        
+		http.csrf()
             .and()
             .authorizeRequests()
-            	.antMatchers("/bye").permitAll()
+            	.antMatchers(postLogoutRedirectPath).permitAll()
             	.antMatchers("/").permitAll()
             	.anyRequest().authenticated()
             .and()
@@ -48,9 +42,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             	.defaultSuccessUrl("/", true)
             .and()
             .logout()
-            .logoutSuccessHandler(logoutSuccessHandlerFactory.getInstance(new HashMap<String, String>() {{
-            	this.put("post_logout_redirect_path", "/bye");
-            }}))
+            //.logoutRequestMatcher(new AntPathRequestMatcher("/logout")) // Disable Logout Confirmation
+            .logoutSuccessHandler(logoutSuccessHandler)
             .logoutSuccessUrl("/");
         
         //http.csrf().disable();
