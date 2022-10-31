@@ -26,9 +26,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
     	
-    	CognitoOidcClientInitiatedLogoutSuccessHandler logoutHandler = new CognitoOidcClientInitiatedLogoutSuccessHandler(this.clientRegistrationRepository);
-    	logoutHandler.setPostLogoutRedirectUri("http://localhost:8080/bye");
-    	logoutHandler.withLogoutUri(cognitoLogoutUri);
+    	LogoutSuccessHandler logoutHandler = new CognitoOidcClientInitiatedLogoutSuccessHandler(this.clientRegistrationRepository)
+    		.withPostLogoutRedirectUri("{baseUrl}/bye")
+    		.withLogoutUri(cognitoLogoutUri);
     	
         http.csrf()
             .and()
