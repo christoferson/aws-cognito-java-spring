@@ -30,3 +30,7 @@ logging:
     org:
       springframework:
         security: DEBUG
+
+aws:        
+  cognito:
+    logout-url: https://{cognito.domain}.auth.{aws.region}.amazoncognito.com/logout

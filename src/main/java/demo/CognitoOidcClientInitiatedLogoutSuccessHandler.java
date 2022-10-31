@@ -122,9 +122,10 @@ public class CognitoOidcClientInitiatedLogoutSuccessHandler extends SimpleUrlLog
 	 * {@code post_logout_redirect_uri} query parameter
 	 * @since 5.3
 	 */
-	public void setPostLogoutRedirectUri(String postLogoutRedirectUri) {
+	public CognitoOidcClientInitiatedLogoutSuccessHandler withPostLogoutRedirectUri(String postLogoutRedirectUri) {
 		Assert.notNull(postLogoutRedirectUri, "postLogoutRedirectUri cannot be null");
 		this.postLogoutRedirectUri = postLogoutRedirectUri;
+		return this;
 	}
 
 	public String getLogoutUri() {
