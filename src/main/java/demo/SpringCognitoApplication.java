@@ -9,4 +9,5 @@ public class SpringCognitoApplication {
     public static void main(String[] args) {
         SpringApplication.run(SpringCognitoApplication.class, args);
     }
+
 }

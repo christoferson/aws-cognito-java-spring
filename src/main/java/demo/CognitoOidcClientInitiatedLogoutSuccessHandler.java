@@ -7,6 +7,8 @@ import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
@@ -18,8 +20,11 @@ import org.springframework.security.web.util.UrlUtils;
 import org.springframework.util.Assert;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
-
+// Based on OidcClientInitiatedLogoutSuccessHandler
+// https://<DOMAIN_PREFIX>.auth.<AWS_REGION>.amazoncognito.com/logout
 public class CognitoOidcClientInitiatedLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(CognitoOidcClientInitiatedLogoutSuccessHandler.class);
 
 	private final ClientRegistrationRepository clientRegistrationRepository;
 
@@ -33,13 +38,11 @@ public class CognitoOidcClientInitiatedLogoutSuccessHandler extends SimpleUrlLog
 	}
 
 	@Override
-	protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response,
-			Authentication authentication) {
+	protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 		String targetUrl = null;
 		if (authentication instanceof OAuth2AuthenticationToken && authentication.getPrincipal() instanceof OidcUser) {
-			String registrationId = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
-			ClientRegistration clientRegistration = this.clientRegistrationRepository
-					.findByRegistrationId(registrationId);
+			String registrationId = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId(); //cognito
+			ClientRegistration clientRegistration = this.clientRegistrationRepository.findByRegistrationId(registrationId);
 			URI endSessionEndpoint = this.endSessionEndpoint(clientRegistration);
 			if (endSessionEndpoint != null) {
 				String idToken = idToken(authentication);
@@ -52,18 +55,16 @@ public class CognitoOidcClientInitiatedLogoutSuccessHandler extends SimpleUrlLog
 	}
 
 	private URI endSessionEndpoint(ClientRegistration clientRegistration) {
-		if (clientRegistration != null) {
-			ProviderDetails providerDetails = clientRegistration.getProviderDetails();
-			Object endSessionEndpoint = providerDetails.getConfigurationMetadata().get("end_session_endpoint");
-			if (endSessionEndpoint != null) {
-				return URI.create(endSessionEndpoint.toString());
-			}
-			if (this.logoutUri != null) {
-				return URI.create(this.logoutUri);
-			}
-			return URI.create("");
+		if (clientRegistration == null) {
+			return null;
 		}
-		return null;
+
+		ProviderDetails providerDetails = clientRegistration.getProviderDetails();
+		Object endSessionEndpoint = providerDetails.getConfigurationMetadata().get("end_session_endpoint");
+		if (endSessionEndpoint != null) { // null
+			return URI.create(endSessionEndpoint.toString());
+		}
+		return URI.create(this.logoutUri);
 	}
 
 	private String idToken(Authentication authentication) {
