@@ -1,5 +1,7 @@
 package demo;
 
+import java.util.HashMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -10,6 +12,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+
+import demo.cognito.CognitoOidcLogoutSuccessHandlerFactory;
 
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -22,6 +26,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Value("${aws.cognito.logout-url}")
 	private String cognitoLogoutUri;	
+	
+	@Autowired
+	private CognitoOidcLogoutSuccessHandlerFactory logoutSuccessHandlerFactory;
 	
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -41,7 +48,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             	.defaultSuccessUrl("/", true)
             .and()
             .logout()
-            .logoutSuccessHandler(logoutHandler)
+            .logoutSuccessHandler(logoutSuccessHandlerFactory.getInstance(new HashMap<String, String>() {{
+            	this.put("post_logout_redirect_path", "/bye");
+            }}))
             .logoutSuccessUrl("/");
         
         //http.csrf().disable();
