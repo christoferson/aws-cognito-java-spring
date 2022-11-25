@@ -1,9 +1,8 @@
 package demo;
 
-import java.util.HashMap;
+import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,9 +10,6 @@ import org.springframework.security.authentication.AuthenticationEventPublisher;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import demo.cognito.CognitoOidcLogoutSuccessHandler;
 import demo.cognito.CognitoOidcLogoutSuccessHandlerFactory;
 
 @Configuration
@@ -27,9 +23,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     
     	String postLogoutRedirectPath = "/bye";
     	
-        LogoutSuccessHandler logoutSuccessHandler = logoutSuccessHandlerFactory.getInstance(new HashMap<String, String>() {{
-			this.put("post_logout_redirect_path", postLogoutRedirectPath);
-		}});
+        LogoutSuccessHandler logoutSuccessHandler = logoutSuccessHandlerFactory.getInstance(
+        	Collections.singletonMap("post_logout_redirect_path", postLogoutRedirectPath)
+        );
         
 		http.csrf()
             .and()

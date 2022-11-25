@@ -12,7 +12,8 @@
 	<section class="section">
 		<div class="container has-text-centered">
 			<div>
-				<h1 class="title">OAuth2 Spring Security Cognito Secured Page <a href="http://localhost:8080/">TOP</a></h1>
+				<h1 class="title">OAuth2 Spring Security Cognito</h1>
+				<h1 class="title" style="color:red;">Secured Page</h1>
 
 				<div sec:authorize="isAuthenticated()">
 					<div class="box">
@@ -24,15 +25,18 @@
 			        Authenticated user roles:
 			        <div sec:authentication="principal.authorities"></div>
 					</div>
+					<hr/>
 					<div>
-						<a th:href="@{/logout}">Logout</a>
+						<a th:href="@{/logout}">Logout (with Confirmation)</a>
+						&nbsp;|&nbsp;
+						<a href="javascript: document.logoutForm.submit()" role="menuitem">Logout</a>
+						&nbsp;|&nbsp;
+						<a href="http://localhost:8080/">Back to Top</a>
 					</div>
 					<div>
-						<a href="javascript: document.logoutForm.submit()" role="menuitem"> Logout2</a>
-	
-					   <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
-					      <input type="submit" value="Sign Out"/>
-					   </form> 
+						<form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
+					    	<input type="submit" value="Sign Out"/>
+					  	</form> 
 					</div>
 				</div>
 

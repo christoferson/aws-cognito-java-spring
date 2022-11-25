@@ -25,12 +25,15 @@
 			        Authenticated user roles:
 			        <div sec:authentication="principal.authorities"></div>
 					</div>
+					<hr/>
 					<div>
-						<a th:href="@{/logout}">Logout (With Confirmation)</a>
+						<a th:href="@{/logout}">Logout (with Confirmation)</a>
+						&nbsp;|&nbsp;
+						<a href="javascript: document.logoutForm.submit()" role="menuitem">Logout</a>
+						&nbsp;|&nbsp;
+						<a href="http://localhost:8080/secured">Secured Page</a>
 					</div>
 					<div>
-						<a href="javascript: document.logoutForm.submit()" role="menuitem">Logout</a>
-	
 					   <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
 					      <input type="submit" value="Sign Out"/>
 					   </form> 
@@ -43,8 +46,6 @@
 							th:href="@{/oauth2/authorization/cognito}">Log in with Amazon Cognito</a>
 					</div>
 				</div>
-				
-				<div>Secured Page: <a href="http://localhost:8080/secured">LINK</a></div>
 			</div>
 		</div>
 	</section>
